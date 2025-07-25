@@ -1,4 +1,5 @@
 import { h, VNode } from './vdom';
+import { getComponent } from './registry';
 
 export function html(strings: TemplateStringsArray, ...values: any[]): VNode {
   const rawHtml = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
@@ -22,15 +23,20 @@ function convertToVNode(fragment: DocumentFragment): VNode {
       }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       const el = node as HTMLElement;
-
+      const tag = el.tagName.toLowerCase();
       const props: Record<string, any> = {};
-      const childVNodes = convertToVNode(el as any).children;
 
       for (const attr of el.attributes) {
         props[attr.name] = attr.value;
       }
 
-      children.push(h(el.tagName.toLowerCase(), props, ...childVNodes));
+      const childVNode = convertToVNode(el as any).children;
+
+      if (getComponent(tag)) {
+        children.push(h('__component__', { tag, ...props }, ...childVNode));
+      } else {
+        children.push(h(tag, props, ...childVNode));
+      }
     }
   });
 
