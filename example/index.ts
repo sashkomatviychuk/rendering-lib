@@ -31,10 +31,24 @@ const ParentComponent = defineComponent({
 });
 
 const ChildComponent = defineComponent({
-  state: { childText: 'Child content' },
+  state: { childText: 'Child content', todos: [{ title: 'Create a new component', done: false }] },
   handlers: {
     onClick() {
       this.state.childText = 'Content was modified!';
+    },
+    addTodo() {
+      this.state.todos.push({
+        done: false,
+        title: 'New todo',
+      });
+    },
+    toggleTodo() {
+      console.log('toggle');
+      if (this.state.todos.length) {
+        this.state.todos.forEach((t) => {
+          t.done = true;
+        });
+      }
     },
   },
   propTypes: {
@@ -59,7 +73,11 @@ const ChildComponent = defineComponent({
       <div class="parent">
         <p>Hello, ${props?.name}</p>
         <p>Content: ${state.childText}</p>
-        <button onClick="${'onClick'}">Modify content</button>
+        <ul>
+          ${state.todos.map(({ done, title }) => `<li>${title} - ${done ? 'Yes' : 'No'}</li>`).join('\n')}
+        </ul>
+        <button onClick="${'toggleTodo'}">Toggle first todo</button>
+        <button onClick="${'addTodo'}">Add todo</button>
       </div>
     `;
   },
