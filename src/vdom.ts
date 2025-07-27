@@ -1,8 +1,12 @@
 import { getComponent } from './registry';
-import { VNode } from './types';
+import { Props, VNode } from './types';
 
-export function h(type: string, props: Record<string, any>, ...children: (VNode | string)[]): VNode {
-  return { type, props: props || {}, children };
+export function h(type: string, props: Props, ...children: (VNode | string)[]): VNode {
+  return {
+    type,
+    props: props ?? {},
+    children,
+  };
 }
 
 export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: string): Node {

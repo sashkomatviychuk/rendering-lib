@@ -1,23 +1,36 @@
 import { defineComponent } from '../src/defineComponent';
+import { registerComponent } from '../src/registry';
 import { html } from '../src/template';
 
-export const ParentComponent = defineComponent({
+const ParentComponent = defineComponent({
   state: { parentTitle: 'Parent' },
-  handlers: {
-    onParentClick() {
-      alert('From parent: ' + this.state.parentTitle);
+  propTypes: {
+    name: {
+      type: String,
     },
   },
-  render({ state }) {
+  handlers: {
+    onParentClick() {
+      this.state.parentTitle = 'Changed!';
+    },
+    onClick() {
+      console.log('child click');
+    },
+  },
+
+  render({ state, props }) {
     return html`
-      <h2>${state.parentTitle}</h2>
-      <button onClick="${'onParentClick'}">Click Parent</button>
-      <child-component name="Jonh Done"></child-component>
+      <div class="parent">
+        <h2>${state.parentTitle}</h2>
+        <p>${props?.name}</p>
+        <button onClick="${'onParentClick'}">Click Parent</button>
+        <child-component name="${props?.name}" onClick="${'onClick'}"></child-component>
+      </div>
     `;
   },
 });
 
-export const ChildComponent = defineComponent({
+const ChildComponent = defineComponent({
   state: { childText: 'Child content' },
   handlers: {
     onClick() {
@@ -29,9 +42,21 @@ export const ChildComponent = defineComponent({
       type: String,
     },
   },
+  styles: `
+    :host .parent {
+      background: #ccc;
+    }
+
+    :host button {
+      background: #fff;
+      border: 2px solid purple;
+      outline: none;
+      padding: 4px;
+    }
+  `,
   render({ state, props }) {
     return html`
-      <div>
+      <div class="parent">
         <p>Hello, ${props?.name}</p>
         <p>Content: ${state.childText}</p>
         <button onClick="${'onClick'}">Modify content</button>
@@ -40,4 +65,8 @@ export const ChildComponent = defineComponent({
   },
 });
 
-ParentComponent.mount(document.getElementById('app')!);
+registerComponent('child-component', ChildComponent as any);
+
+ParentComponent.mount(document.getElementById('app')!, {
+  name: 'ParentName' as any,
+});

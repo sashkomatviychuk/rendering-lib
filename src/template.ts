@@ -9,7 +9,9 @@ export function html(strings: TemplateStringsArray, ...values: any[]): VNode {
   const doc = parser.parseFromString(`<template>${rawHtml}</template>`, 'text/html');
   const template = doc.querySelector('template')!;
 
-  return convertToVNode(template.content);
+  const vnode = convertToVNode(template.content);
+
+  return vnode;
 }
 
 function convertToVNode(fragment: DocumentFragment): VNode {
@@ -41,5 +43,6 @@ function convertToVNode(fragment: DocumentFragment): VNode {
     }
   });
 
+  // If fragment then no need to render it
   return h('fragment', {}, ...children);
 }

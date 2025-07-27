@@ -24,7 +24,7 @@ export function defineComponent<S extends State, H extends Handlers<S>, P extend
       ...def,
       handlers: boundHandlers,
     },
-    mount(el, props, options) {
+    mount(el, props = {} as P, options) {
       const scopeId = def.styles ? generateScopeId() : undefined;
 
       // Inject scoped <style> once
@@ -40,15 +40,17 @@ export function defineComponent<S extends State, H extends Handlers<S>, P extend
         state: def.state,
         render:
           options?.render ??
-          (({ state }) =>
-            def.render({
+          (({ state, props }) => {
+            return def.render({
               state,
               handlers: Object.keys(boundHandlers).reduce((acc, key) => {
                 acc[key as keyof H] = key;
                 return acc;
               }, {} as any),
               event: (k) => k,
-            })),
+              props: props as any,
+            });
+          }),
         handlers: def.handlers,
         onInit: def.onInit,
         onDestroy: def.onDestroy,
