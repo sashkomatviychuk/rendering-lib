@@ -38,8 +38,6 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
 
   Object.entries(vnode.props).forEach(([key, val]) => {
     if (key.startsWith('on')) {
-      console.log({ props: vnode.props });
-
       el.addEventListener(key.slice(2).toLowerCase(), val);
     } else {
       el.setAttribute(key, val);

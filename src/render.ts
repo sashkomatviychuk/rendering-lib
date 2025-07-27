@@ -42,8 +42,6 @@ export function renderComponent<S extends State, P extends Props, H extends Hand
   function update() {
     const newVNode = render({ state: reactiveState, props });
 
-    console.log({ newVNode });
-
     bindHandlersToProps(newVNode);
 
     if (oldVNode) {
