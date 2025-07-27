@@ -37,17 +37,15 @@ const ChildComponent = defineComponent({
       this.state.childText = 'Content was modified!';
     },
     addTodo() {
+      console.log('add new todo');
       this.state.todos.push({
         done: false,
         title: 'New todo',
       });
     },
     toggleTodo() {
-      console.log('toggle');
       if (this.state.todos.length) {
-        this.state.todos.forEach((t) => {
-          t.done = true;
-        });
+        this.state.todos[0].done = !this.state.todos[0].done;
       }
     },
   },

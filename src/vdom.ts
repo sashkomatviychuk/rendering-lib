@@ -76,7 +76,7 @@ export function patch(parent: Node, oldVNode: VNode | string, newVNode: VNode | 
 
     // Remove stale props
     Object.keys(oldProps).forEach((key) => {
-      if (!(key in newProps)) {
+      if (key in newProps) {
         if (key.startsWith('on')) {
           element.removeEventListener(key.slice(2).toLowerCase(), oldProps[key]);
         } else {
