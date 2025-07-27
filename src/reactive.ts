@@ -1,7 +1,4 @@
-export function createReactive<T extends Record<string, unknown>>(
-  obj: T,
-  onChange: (key: keyof T, value: any) => void
-): T {
+export function createReactive<T extends object>(obj: T, onChange: (key: keyof T, value: any) => void): T {
   return new Proxy(obj, {
     get(target, key) {
       return target[key as keyof T];

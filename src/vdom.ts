@@ -1,10 +1,5 @@
 import { getComponent } from './registry';
-
-export type VNode = {
-  type: string;
-  props: Record<string, any>;
-  children: (VNode | string)[];
-};
+import { VNode } from './types';
 
 export function h(type: string, props: Record<string, any>, ...children: (VNode | string)[]): VNode {
   return { type, props: props || {}, children };
@@ -27,6 +22,7 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
 
     component?.mount(el, props);
     container.appendChild(el);
+
     return el;
   }
 
@@ -38,6 +34,8 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
 
   Object.entries(vnode.props).forEach(([key, val]) => {
     if (key.startsWith('on')) {
+      console.log({ props: vnode.props });
+
       el.addEventListener(key.slice(2).toLowerCase(), val);
     } else {
       el.setAttribute(key, val);

@@ -1,5 +1,6 @@
-import { h, VNode } from './vdom';
+import { h } from './vdom';
 import { getComponent } from './registry';
+import { VNode } from './types';
 
 export function html(strings: TemplateStringsArray, ...values: any[]): VNode {
   const rawHtml = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');

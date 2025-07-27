@@ -1,3 +1,5 @@
+import { defineComponent } from './defineComponent';
+
 const registry = new Map<string, ReturnType<typeof defineComponent>>();
 
 export function registerComponent(name: string, component: ReturnType<typeof defineComponent>) {
