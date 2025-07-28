@@ -33,11 +33,10 @@ const ParentComponent = defineComponent({
 const ChildComponent = defineComponent({
   state: { childText: 'Child content', todos: [{ title: 'Create a new component', done: false }] },
   handlers: {
-    onClick() {
+    onClick(e) {
       this.state.childText = 'Content was modified!';
     },
     addTodo() {
-      console.log('add new todo');
       this.state.todos.push({
         done: false,
         title: 'New todo',
@@ -48,10 +47,16 @@ const ChildComponent = defineComponent({
         this.state.todos[0].done = !this.state.todos[0].done;
       }
     },
+    onContainerClick(e) {
+      this.props.onClick(e);
+    },
   },
   propTypes: {
     name: {
       type: String,
+    },
+    onClick: {
+      type: Function,
     },
   },
   styles: `
@@ -66,16 +71,16 @@ const ChildComponent = defineComponent({
       padding: 4px;
     }
   `,
-  render({ state, props }) {
+  render({ state, props, event }) {
     return html`
-      <div class="parent">
+      <div class="parent" onClick="${event('onContainerClick')}">
         <p>Hello, ${props?.name}</p>
         <p>Content: ${state.childText}</p>
         <ul>
           ${state.todos.map(({ done, title }) => `<li>${title} - ${done ? 'Yes' : 'No'}</li>`).join('\n')}
         </ul>
-        <button onClick="${'toggleTodo'}">Toggle first todo</button>
-        <button onClick="${'addTodo'}">Add todo</button>
+        <button onClick="${event('toggleTodo')}">Toggle first todo</button>
+        <button onClick="${event('addTodo')}">Add todo</button>
       </div>
     `;
   },

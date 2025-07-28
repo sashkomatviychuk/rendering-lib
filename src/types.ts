@@ -29,35 +29,44 @@ export type InferProps<T extends PropTypesDefinition> = {
   [K in keyof T]: ConstructorToType<T[K]['type']>;
 };
 
-export type HandlerThis<S extends State> = {
+export type HandlerThis<S extends State, P extends Props> = {
   state: S;
+  readonly props: P;
 };
 
-export type HandlerFn<S extends State> = (this: HandlerThis<S>, event: Event) => void;
+export type HandlerFn<S extends State, P extends Props> = (this: HandlerThis<S, P>, event: Event) => void;
 
-export type Handlers<S extends State> = {
-  [K in string]: HandlerFn<S>;
+export type Handlers<S extends State, P extends Props> = {
+  [K in string]: HandlerFn<S, P>;
 };
 
-export type RenderFn<S extends State, H extends Handlers<S>, P = undefined> = (args: {
+export type RenderFn<S extends State, P extends Props, H extends Handlers<S, P>> = (args: {
   state: S;
   handlers: { [K in keyof H]: string };
   event: <K extends keyof H>(handlerName: K) => K;
   props?: P;
 }) => VNode;
 
-export type ComponentDefinition<S extends State, H extends Handlers<S>, P extends PropTypesDefinition> = {
+export type ComponentDefinition<
+  S extends State,
+  P extends PropTypesDefinition,
+  H extends Handlers<S, InferProps<P>>
+> = {
   state: S;
   handlers: H;
-  render: RenderFn<S, H, P>;
+  render: RenderFn<S, InferProps<P>, H>;
   propTypes?: P;
   styles?: string;
   onInit?: () => void;
   onDestroy?: () => void;
 };
 
-export type ComponentDefinitionReturn<S extends State, H extends Handlers<S>, P extends PropTypesDefinition> = {
-  def: ComponentDefinition<S, H, P>;
+export type ComponentDefinitionReturn<
+  S extends State,
+  P extends PropTypesDefinition,
+  H extends Handlers<S, InferProps<P>>
+> = {
+  def: ComponentDefinition<S, P, H>;
   mount: (
     el: HTMLElement,
     props?: InferProps<P>,
@@ -70,7 +79,7 @@ export type ComponentDefinitionReturn<S extends State, H extends Handlers<S>, P 
   ) => void;
 };
 
-export type RenderComponentParams<S extends State, P, H extends Handlers<S>> = {
+export type RenderComponentParams<S extends State, P extends Props, H extends Handlers<S, P>> = {
   state: S;
   handlers: H;
   props?: P;

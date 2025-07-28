@@ -12,18 +12,11 @@ function generateScopeId() {
   return 's-' + Math.random().toString(36).slice(2, 8);
 }
 
-export function defineComponent<S extends State, H extends Handlers<S>, P extends PropTypesDefinition>(
-  def: ComponentDefinition<S, H, P>
-): ComponentDefinitionReturn<S, H, P> {
-  const boundHandlers = Object.fromEntries(
-    Object.entries(def.handlers).map(([key, handler]) => [key, handler.bind({ state: def.state })])
-  ) as H;
-
+export function defineComponent<S extends State, P extends PropTypesDefinition, H extends Handlers<S, InferProps<P>>>(
+  def: ComponentDefinition<S, P, H>
+): ComponentDefinitionReturn<S, P, H> {
   return {
-    def: {
-      ...def,
-      handlers: boundHandlers,
-    },
+    def,
     mount(el, props = {} as InferProps<P>, options) {
       const scopeId = def.styles ? generateScopeId() : undefined;
 
@@ -43,7 +36,7 @@ export function defineComponent<S extends State, H extends Handlers<S>, P extend
           (({ state, props }) => {
             return def.render({
               state,
-              handlers: Object.keys(boundHandlers).reduce((acc, key) => {
+              handlers: Object.keys(def.handlers).reduce((acc, key) => {
                 acc[key as keyof H] = key;
                 return acc;
               }, {} as any),

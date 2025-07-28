@@ -6,7 +6,7 @@ export function render(strings: TemplateStringsArray, ...values: any[]) {
   return strings.reduce((out, str, i) => out + str + (values[i] ?? ''), '');
 }
 
-export function renderComponent<S extends State, P extends Props, H extends Handlers<S>>({
+export function renderComponent<S extends State, P extends Props, H extends Handlers<S, P>>({
   render,
   state,
   handlers,
@@ -33,7 +33,7 @@ export function renderComponent<S extends State, P extends Props, H extends Hand
 
     Object.entries(props).forEach(([key, value]) => {
       if (value in handlers) {
-        props[key] = handlers[value].bind({ state: reactiveState });
+        props[key] = handlers[value].bind({ state: reactiveState, props: props as P });
       }
     });
     vNode.children.forEach((vNode) => bindHandlersToProps(vNode));
