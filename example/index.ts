@@ -84,5 +84,5 @@ const ChildComponent = defineComponent({
 registerComponent('child-component', ChildComponent as any);
 
 ParentComponent.mount(document.getElementById('app')!, {
-  name: 'ParentName' as any,
+  name: 'ParentName',
 });

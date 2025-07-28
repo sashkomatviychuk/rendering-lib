@@ -5,12 +5,28 @@ type PropConstructor<T> = {
   type: T;
 };
 
+type ConstructorToType<T> = T extends StringConstructor
+  ? string
+  : T extends NumberConstructor
+  ? number
+  : T extends BooleanConstructor
+  ? boolean
+  : T extends ArrayConstructor
+  ? any[]
+  : T extends ObjectConstructor
+  ? object
+  : T extends DateConstructor
+  ? Date
+  : T extends FunctionConstructor
+  ? Function
+  : unknown;
+
 export type PropTypesDefinition = {
   [key: string]: PropConstructor<any>;
 };
 
 export type InferProps<T extends PropTypesDefinition> = {
-  [K in keyof T]: T[K]['type'];
+  [K in keyof T]: ConstructorToType<T[K]['type']>;
 };
 
 export type HandlerThis<S extends State> = {

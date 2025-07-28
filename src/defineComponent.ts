@@ -24,7 +24,7 @@ export function defineComponent<S extends State, H extends Handlers<S>, P extend
       ...def,
       handlers: boundHandlers,
     },
-    mount(el, props = {} as P, options) {
+    mount(el, props = {} as InferProps<P>, options) {
       const scopeId = def.styles ? generateScopeId() : undefined;
 
       // Inject scoped <style> once
