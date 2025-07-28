@@ -7,7 +7,7 @@ A minimal reactive UI library for building component-based web applications with
 - **Reactive State:** Automatic UI updates when state changes.
 - **Component System:** Define reusable components with state, props, handlers, and styles.
 - **Virtual DOM:** Efficient DOM updates using a simple VDOM implementation.
-- **Scoped Styles:** Component styles are scoped using a generated attribute.
+- **Scoped Styles:** Write CSS directly in your component; styles are automatically scoped to the component using a unique attribute, preventing style leakage or conflicts.
 - **Custom Events & Handlers:** Bind event handlers directly in templates.
 - **Prop Types:** Define and validate component props.
 
@@ -38,6 +38,7 @@ Define a component:
 ```typescript
 import { defineComponent } from './src/defineComponent';
 import { html } from './src/template';
+import { css } from './src/css';
 
 const MyComponent = defineComponent({
   state: { count: 0 },
@@ -46,16 +47,23 @@ const MyComponent = defineComponent({
       this.state.count++;
     },
   },
-  render({ state }) {
+  styles: css`
+    .counter {
+      color: blue;
+    }
+  `,
+  render({ state, event }) {
     return html`
-      <div>
+      <div class="counter">
         <span>${state.count}</span>
-        <button onClick="${'increment'}">Increment</button>
+        <button onClick="${event('increment')}">Increment</button>
       </div>
     `;
   },
 });
 ```
+
+> **Note:** The `styles` property allows you to define CSS for your component. These styles are automatically scoped using a unique attribute, so they only apply to this component instance.
 
 Mount a component:
 
@@ -71,9 +79,14 @@ import { registerComponent } from './src/registry';
 registerComponent('my-child', MyComponent);
 ```
 
+## Example
+
+See [`example/index.ts`](example/index.ts) for a full example with parent and child components, state, props, handlers, and scoped styles.
+
 ## File Structure
 
 - [`src/`](src/)
+  - [`css.ts`](src/css.ts): Scoped CSS utility.
   - [`defineComponent.ts`](src/defineComponent.ts): Component definition logic.
   - [`reactive.ts`](src/reactive.ts): Reactive state implementation.
   - [`registry.ts`](src/registry.ts): Component registry.
@@ -83,5 +96,6 @@ registerComponent('my-child', MyComponent);
   - [`vdom.ts`](src/vdom.ts): Virtual DOM functions.
 - [`example/`](example/)
   - [`index.ts`](example/index.ts): Example usage.
+  - [`styles.ts`](example/styles.ts): Example component styles.
   - [`public/index.html`](example/public/index.html): HTML entry point.
-  - [`webpack.config.js`](example/webpack.config.js): Webpack config.
+  - [`webpack.config.js`](example/webpack.config.js): Webpack config
