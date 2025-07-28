@@ -1,6 +1,7 @@
 import { defineComponent } from '../src/defineComponent';
 import { registerComponent } from '../src/registry';
 import { html } from '../src/template';
+import { childCss, parentCss } from './styles';
 
 const ParentComponent = defineComponent({
   state: { parentTitle: 'Parent' },
@@ -9,22 +10,23 @@ const ParentComponent = defineComponent({
       type: String,
     },
   },
+  styles: parentCss,
   handlers: {
     onParentClick() {
       this.state.parentTitle = 'Changed!';
     },
-    onClick() {
+    onSomethingClick() {
       console.log('child click');
     },
   },
 
-  render({ state, props }) {
+  render({ state, props, event }) {
     return html`
       <div class="parent">
         <h2>${state.parentTitle}</h2>
         <p>${props?.name}</p>
-        <button onClick="${'onParentClick'}">Click Parent</button>
-        <child-component name="${props?.name}" onClick="${'onClick'}"></child-component>
+        <button onClick="${event('onParentClick')}">Click Parent</button>
+        <child-component name="${props?.name}" handleChildClick="${event('onSomethingClick')}"></child-component>
       </div>
     `;
   },
@@ -48,39 +50,31 @@ const ChildComponent = defineComponent({
       }
     },
     onContainerClick(e) {
-      this.props.onClick(e);
+      console.log({ props1: this.props });
+      this.props.handleChildClick(e); // todo
     },
   },
   propTypes: {
     name: {
       type: String,
     },
-    onClick: {
+    handleChildClick: {
       type: Function,
     },
   },
-  styles: `
-    :host .parent {
-      background: #ccc;
-    }
-
-    :host button {
-      background: #fff;
-      border: 2px solid purple;
-      outline: none;
-      padding: 4px;
-    }
-  `,
+  styles: childCss,
   render({ state, props, event }) {
     return html`
-      <div class="parent" onClick="${event('onContainerClick')}">
+      <div class="parent">
         <p>Hello, ${props?.name}</p>
         <p>Content: ${state.childText}</p>
         <ul>
           ${state.todos.map(({ done, title }) => `<li>${title} - ${done ? 'Yes' : 'No'}</li>`).join('\n')}
         </ul>
-        <button onClick="${event('toggleTodo')}">Toggle first todo</button>
-        <button onClick="${event('addTodo')}">Add todo</button>
+        <div class="container">
+          <button onClick="${event('toggleTodo')}">Toggle first todo</button>
+          <button onClick="${event('addTodo')}">Add todo</button>
+        </div>
       </div>
     `;
   },

@@ -1,6 +1,6 @@
 import { h } from './vdom';
 import { getComponent } from './registry';
-import { VNode } from './types';
+import { Props, VNode } from './types';
 
 export function html(strings: TemplateStringsArray, ...values: any[]): VNode {
   const rawHtml = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
@@ -9,9 +9,7 @@ export function html(strings: TemplateStringsArray, ...values: any[]): VNode {
   const doc = parser.parseFromString(`<template>${rawHtml}</template>`, 'text/html');
   const template = doc.querySelector('template')!;
 
-  const vnode = convertToVNode(template.content);
-
-  return vnode;
+  return convertToVNode(template.content);
 }
 
 function convertToVNode(fragment: DocumentFragment): VNode {
@@ -27,7 +25,7 @@ function convertToVNode(fragment: DocumentFragment): VNode {
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       const el = node as HTMLElement;
       const tag = el.tagName.toLowerCase();
-      const props: Record<string, any> = {};
+      const props: Props = {};
 
       for (const attr of el.attributes) {
         props[attr.name] = attr.value;

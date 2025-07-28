@@ -19,6 +19,10 @@ export function renderComponent<S extends State, P extends Props, H extends Hand
   let oldVNode: VNode | null = null;
   const container = document.createElement('div');
 
+  if (scopeId) {
+    container.setAttribute(scopeId, '');
+  }
+
   mountPoint.innerHTML = '';
   mountPoint.appendChild(container);
 
