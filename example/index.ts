@@ -3,8 +3,15 @@ import { registerComponent } from '../src/registry';
 import { html } from '../src/template';
 import { childCss, parentCss } from './styles';
 
+interface Todo {
+  title: string;
+  done: boolean;
+}
+
 const ParentComponent = defineComponent({
-  state: { parentTitle: 'Parent' },
+  state: {
+    parentTitle: 'Parent',
+  },
   propTypes: {
     name: {
       type: String,
@@ -33,7 +40,10 @@ const ParentComponent = defineComponent({
 });
 
 const ChildComponent = defineComponent({
-  state: { childText: 'Child content', todos: [{ title: 'Create a new component', done: false }] },
+  state: {
+    childText: 'Child content',
+    todos: [{ title: 'Create a new component', done: false }] as Todo[],
+  },
   handlers: {
     onClick(e) {
       this.state.childText = 'Content was modified!';
@@ -60,6 +70,9 @@ const ChildComponent = defineComponent({
     },
     handleChildClick: {
       type: Function,
+    },
+    todos: {
+      type: [] as unknown as Todo[],
     },
   },
   styles: childCss,

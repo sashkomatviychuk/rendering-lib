@@ -19,7 +19,7 @@ type ConstructorToType<T> = T extends StringConstructor
   ? Date
   : T extends FunctionConstructor
   ? Function
-  : unknown;
+  : T;
 
 export type PropTypesDefinition = {
   [key: string]: PropConstructor<any>;
@@ -74,7 +74,6 @@ export type ComponentDefinitionReturn<
       render: (ctx: { state: S; props?: InferProps<P> }) => VNode;
       onInit?: () => void;
       onDestroy?: () => void;
-      scopeId?: string;
     }
   ) => void;
 };
@@ -94,4 +93,10 @@ export type VNode = {
   type: string;
   props: Record<string, any>;
   children: (VNode | string)[];
+};
+
+export type ComponentNodeInstance = {
+  dom: HTMLElement | Text;
+  vNode: VNode;
+  childInstances: ComponentNodeInstance[];
 };
