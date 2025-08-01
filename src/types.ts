@@ -12,7 +12,7 @@ type ConstructorToType<T> = T extends StringConstructor
   : T extends BooleanConstructor
   ? boolean
   : T extends ArrayConstructor
-  ? any[]
+  ? unknown[]
   : T extends ObjectConstructor
   ? object
   : T extends DateConstructor
@@ -91,7 +91,7 @@ export type RenderComponentParams<S extends State, P extends Props, H extends Ha
 
 export type VNode = {
   type: string;
-  props: Record<string, any>;
+  props: Props;
   children: (VNode | string)[];
 };
 

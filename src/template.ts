@@ -2,7 +2,7 @@ import { h } from './vdom';
 import { getComponent } from './registry';
 import { Props, VNode } from './types';
 
-export function html(strings: TemplateStringsArray, ...values: any[]): VNode {
+export function html(strings: TemplateStringsArray, ...values: unknown[]): VNode {
   const rawHtml = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
 
   const parser = new DOMParser();

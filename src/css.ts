@@ -1,6 +1,6 @@
 let styleCounter = 0;
 
-export function css(strings: TemplateStringsArray, ...values: any[]) {
+export function css(strings: TemplateStringsArray, ...values: unknown[]) {
   const rawCSS = String.raw({ raw: strings }, ...values);
   const uniqueAttr = `data-scope-${styleCounter++}`;
 

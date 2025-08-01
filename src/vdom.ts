@@ -9,7 +9,7 @@ export function h(type: string, props: Props, ...children: (VNode | string)[]): 
   };
 }
 
-export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: string): Node {
+export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: string): Node | undefined {
   if (typeof vnode === 'string') {
     const text = document.createTextNode(vnode);
     container.appendChild(text);
@@ -19,13 +19,21 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
   if (vnode.type === '__component__') {
     const tag = vnode.props.tag;
     const component = getComponent(tag);
-    const el = document.createElement('div');
 
+    if (!component) {
+      return;
+    }
+
+    const el = document.createElement('div');
     const props = { ...vnode.props };
     delete props.tag;
 
-    component?.mount(el, props);
-    container.appendChild(el);
+    component.mount(el, props);
+
+    // mount only elements created by component
+    el.childNodes.forEach((node) => {
+      container.appendChild(node);
+    });
 
     return el;
   }
@@ -53,6 +61,8 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
 export function patch(parent: Node, oldVNode: VNode | string, newVNode: VNode | string, index = 0, scopeId?: string) {
   const el = parent.childNodes[index];
 
+  // console.log({ parent, index });
+
   if (!oldVNode) {
     mount(newVNode, parent as HTMLElement, scopeId);
   } else if (!newVNode) {
@@ -63,11 +73,17 @@ export function patch(parent: Node, oldVNode: VNode | string, newVNode: VNode | 
         typeof newVNode === 'string'
           ? document.createTextNode(newVNode)
           : mount(newVNode, document.createElement('div'), scopeId);
-      parent.replaceChild(newEl, el);
+
+      if (newEl) {
+        parent.replaceChild(newEl, el);
+      }
     }
   } else if (oldVNode.type !== newVNode.type) {
     const newEl = mount(newVNode, document.createElement('div'), scopeId);
-    parent.replaceChild(newEl, el);
+
+    if (newEl) {
+      parent.replaceChild(newEl, el);
+    }
   } else {
     // Update props
     const element = el as HTMLElement;
