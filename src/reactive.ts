@@ -1,15 +1,21 @@
-export function createReactive<T extends object>(obj: T, onChange: (key: keyof T, value: any) => void): T {
-  function wrap(value: any, parentKey: keyof T): any {
+type ArrayMethod = 'push' | 'pop' | 'shift' | 'unshift' | 'splice' | 'sort' | 'reverse';
+
+function isArrayMethod(prop: unknown): prop is ArrayMethod {
+  return typeof prop === 'string' && ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].includes(prop);
+}
+
+export function createReactive<T extends object>(obj: T, onChange: (key: keyof T, value: unknown) => void): T {
+  function wrap(value: unknown, parentKey: keyof T): unknown {
     if (Array.isArray(value)) {
-      return new Proxy(value, {
+      return new Proxy<unknown[]>(value, {
         get(target, prop, receiver) {
-          if (
-            typeof prop === 'string' &&
-            ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].includes(prop)
-          ) {
-            return (...args: any[]) => {
-              const result = (target as any)[prop](...args);
+          if (isArrayMethod(prop)) {
+            return (...args: unknown[]) => {
+              const method = (target as unknown[])[prop] as (...args: unknown[]) => unknown;
+              const result = method();
+
               onChange(parentKey, target);
+
               return result;
             };
           }
@@ -23,7 +29,7 @@ export function createReactive<T extends object>(obj: T, onChange: (key: keyof T
         },
       });
     } else if (typeof value === 'object' && value !== null) {
-      return createReactive(value, onChange as any);
+      return createReactive(value, onChange);
     }
     return value;
   }
