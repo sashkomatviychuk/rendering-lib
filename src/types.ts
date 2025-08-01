@@ -1,4 +1,4 @@
-export type State = Record<string, any>;
+export type State = Record<string, unknown>;
 export type Props = Record<string, any>;
 
 type PropConstructor<T> = {
@@ -22,7 +22,7 @@ type ConstructorToType<T> = T extends StringConstructor
   : T;
 
 export type PropTypesDefinition = {
-  [key: string]: PropConstructor<any>;
+  [key: string]: PropConstructor<unknown>;
 };
 
 export type InferProps<T extends PropTypesDefinition> = {

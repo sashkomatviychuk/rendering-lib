@@ -2,7 +2,7 @@ import { createReactive } from './reactive';
 import { Handlers, Props, RenderComponentParams, State, VNode } from './types';
 import { mount, patch } from './vdom';
 
-export function render(strings: TemplateStringsArray, ...values: any[]) {
+export function render(strings: TemplateStringsArray, ...values: unknown[]) {
   return strings.reduce((out, str, i) => out + str + (values[i] ?? ''), '');
 }
 
@@ -36,7 +36,7 @@ export function renderComponent<S extends State, P extends Props, H extends Hand
     const props = vNode.props;
 
     Object.entries(props).forEach(([key, value]) => {
-      if (value in handlers) {
+      if (typeof value === 'string' && value in handlers) {
         props[key] = handlers[value].bind({ state: reactiveState, props: props as P });
       }
     });
@@ -53,6 +53,7 @@ export function renderComponent<S extends State, P extends Props, H extends Hand
     } else {
       mount(newVNode, container, scopeId);
     }
+
     oldVNode = newVNode;
   }
 
