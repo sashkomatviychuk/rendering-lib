@@ -16,6 +16,11 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
     return text;
   }
 
+  if (vnode.type === 'fragment') {
+    vnode.children.forEach((child) => mount(child, container, scopeId));
+    return container;
+  }
+
   if (vnode.type === '__component__') {
     const tag = vnode.props.tag;
     const component = getComponent(tag);
@@ -60,8 +65,6 @@ export function mount(vnode: VNode | string, container: HTMLElement, scopeId?: s
 
 export function patch(parent: Node, oldVNode: VNode | string, newVNode: VNode | string, index = 0, scopeId?: string) {
   const el = parent.childNodes[index];
-
-  // console.log({ parent, index });
 
   if (!oldVNode) {
     mount(newVNode, parent as HTMLElement, scopeId);
@@ -112,7 +115,10 @@ export function patch(parent: Node, oldVNode: VNode | string, newVNode: VNode | 
 
     // Ensure scope attribute is preserved
     if (scopeId) {
-      element.setAttribute('data-scope', scopeId);
+      console.log({ element });
+      if (element.nodeType !== Node.TEXT_NODE) {
+        element.setAttribute('data-scope', scopeId);
+      }
     }
 
     // Patch children
