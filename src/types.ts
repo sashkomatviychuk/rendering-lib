@@ -42,7 +42,6 @@ export type Handlers<S extends State, P extends Props> = {
 
 export type RenderFn<S extends State, P extends Props, H extends Handlers<S, P>> = (args: {
   state: S;
-  handlers: { [K in keyof H]: string };
   event: <K extends keyof H>(handlerName: K) => K;
   props?: P;
 }) => VNode;

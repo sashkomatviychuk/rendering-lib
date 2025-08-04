@@ -21,12 +21,8 @@ export function defineComponent<S extends State, P extends PropTypesDefinition, 
           (({ state, props }) => {
             return def.render({
               state,
-              handlers: Object.keys(def.handlers).reduce((acc, key) => {
-                acc[key as keyof H] = key;
-                return acc;
-              }, {} as Record<keyof H, string>),
               event: (k) => k,
-              props: props as InferProps<P>,
+              props,
             });
           }),
         handlers: def.handlers,
