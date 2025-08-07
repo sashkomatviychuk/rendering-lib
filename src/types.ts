@@ -42,7 +42,7 @@ export type Handlers<S extends State, P extends Props> = {
 
 export type RenderFn<S extends State, P extends Props, H extends Handlers<S, P>> = (args: {
   state: S;
-  event: <K extends keyof H>(handlerName: K) => K;
+  event: EventRef<S, P, H>;
   props?: P;
 }) => VNode;
 
@@ -91,7 +91,7 @@ export type RenderComponentParams<S extends State, P extends Props, H extends Ha
 export type VNode = {
   type: string;
   props: Props;
-  children: (VNode | string)[];
+  children: (VNode | string)[]; // remove string
 };
 
 export type ComponentNodeInstance = {
@@ -99,3 +99,24 @@ export type ComponentNodeInstance = {
   vNode: VNode;
   childInstances: ComponentNodeInstance[];
 };
+
+export type EventRef<S extends State, P extends Props, H extends Handlers<S, P>> = <
+  K extends (keyof H & string) | (keyof P & string)
+>(
+  key: K
+) => K extends keyof H ? `ref:handlers.${K}` : K extends keyof P ? `ref:props.${K}` : never;
+
+export function createEventRef<S extends State, P extends Props, H extends Handlers<S, P>>(
+  handlers: H,
+  props?: P
+): EventRef<S, P, H> {
+  return ((key) => {
+    if (key in handlers) {
+      return `ref:handlers.${key}` as any;
+    }
+    if (props && key in props) {
+      return `ref:props.${key}` as any;
+    }
+    throw new Error(`Invalid key: ${key}`);
+  }) as EventRef<S, P, H>;
+}

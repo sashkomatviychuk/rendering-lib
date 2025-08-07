@@ -28,14 +28,18 @@ const ParentComponent = defineComponent({
   },
 
   render({ state, props, event }) {
-    return html`
+    const vNode = html`
       <div class="parent">
         <h2>${state.parentTitle}</h2>
         <p>${props?.name}</p>
-        <button onClick="${event('onParentClick')}">Click Parent</button>
-        <child-component name="${props?.name}" handleChildClick="${event('onSomethingClick')}"></child-component>
+        <button onClick="${event('name')}">Click Parent</button>
+        <child-component name="${props?.name}" doomy="${event('onSomethingClick')}"></child-component>
       </div>
     `;
+
+    console.log({ vNode });
+
+    return vNode;
   },
 });
 

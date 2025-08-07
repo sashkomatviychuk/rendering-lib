@@ -2,8 +2,8 @@ import { h } from './vdom';
 import { getComponent } from './registry';
 import { Props, VNode } from './types';
 
-const isTextNode = (node: Node): node is Text => node.nodeType === Node.TEXT_NODE;
-const isElementNode = (node: Node): node is HTMLElement => node.nodeType === Node.ELEMENT_NODE;
+const isTextNode = (node: Node): node is Text => node instanceof Text;
+const isElementNode = (node: Node): node is HTMLElement => node instanceof HTMLElement;
 
 export function html(strings: TemplateStringsArray, ...values: unknown[]): VNode {
   const rawHtml = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');

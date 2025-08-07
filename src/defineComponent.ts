@@ -2,6 +2,7 @@ import { renderComponent } from './render';
 import {
   ComponentDefinition,
   ComponentDefinitionReturn,
+  createEventRef,
   Handlers,
   InferProps,
   PropTypesDefinition,
@@ -21,7 +22,7 @@ export function defineComponent<S extends State, P extends PropTypesDefinition, 
           (({ state, props }) => {
             return def.render({
               state,
-              event: (k) => k,
+              event: createEventRef<S, InferProps<P>, H>(def.handlers, props),
               props,
             });
           }),
