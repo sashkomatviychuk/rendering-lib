@@ -2,6 +2,9 @@ import { h } from './vdom';
 import { getComponent } from './registry';
 import { Props, VNode } from './types';
 
+const isTextNode = (node: Node): node is Text => node.nodeType === Node.TEXT_NODE;
+const isElementNode = (node: Node): node is HTMLElement => node.nodeType === Node.ELEMENT_NODE;
+
 export function html(strings: TemplateStringsArray, ...values: unknown[]): VNode {
   const rawHtml = strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), '');
 
@@ -12,26 +15,26 @@ export function html(strings: TemplateStringsArray, ...values: unknown[]): VNode
   return convertToVNode(template.content);
 }
 
-function convertToVNode(fragment: DocumentFragment): VNode {
+function convertToVNode(fragment: DocumentFragment | HTMLElement): VNode {
+  // todo: refactor VNode type
   const children: (VNode | string)[] = [];
 
   fragment.childNodes.forEach((node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent?.trim();
+    if (isTextNode(node)) {
+      const text = node.textContent.trim();
 
       if (text) {
         children.push(text);
       }
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const el = node as HTMLElement;
-      const tag = el.tagName.toLowerCase();
+    } else if (isElementNode(node)) {
+      const tag = node.tagName.toLowerCase();
       const props: Props = {};
 
-      for (const attr of el.attributes) {
+      for (const attr of node.attributes) {
         props[attr.name] = attr.value;
       }
 
-      const childVNode = convertToVNode(el as any).children;
+      const childVNode = convertToVNode(node).children;
 
       if (getComponent(tag)) {
         children.push(h('__component__', { tag, ...props }, ...childVNode));
