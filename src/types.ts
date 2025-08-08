@@ -5,6 +5,12 @@ type PropConstructor<T> = {
   type: T;
 };
 
+type AnyFn = (...args: any[]) => unknown;
+
+type KeysOfFn<T> = {
+  [K in keyof T]-?: T[K] extends AnyFn ? K : never;
+}[keyof T];
+
 type ConstructorToType<T> = T extends StringConstructor
   ? string
   : T extends NumberConstructor
@@ -18,7 +24,7 @@ type ConstructorToType<T> = T extends StringConstructor
   : T extends DateConstructor
   ? Date
   : T extends FunctionConstructor
-  ? Function
+  ? AnyFn
   : T;
 
 export type PropTypesDefinition = {
@@ -101,10 +107,10 @@ export type ComponentNodeInstance = {
 };
 
 export type EventRef<S extends State, P extends Props, H extends Handlers<S, P>> = <
-  K extends (keyof H & string) | (keyof P & string)
+  K extends (keyof H & string) | (KeysOfFn<P> & string)
 >(
   key: K
-) => K extends keyof H ? `ref:handlers.${K}` : K extends keyof P ? `ref:props.${K}` : never;
+) => K extends keyof H ? `ref:handlers.${K}` : K extends KeysOfFn<P> ? `ref:props.${K}` : never;
 
 export function createEventRef<S extends State, P extends Props, H extends Handlers<S, P>>(
   handlers: H,
@@ -114,9 +120,11 @@ export function createEventRef<S extends State, P extends Props, H extends Handl
     if (key in handlers) {
       return `ref:handlers.${key}` as any;
     }
-    if (props && key in props) {
+
+    if (props && key in props && typeof props[key] === 'function') {
       return `ref:props.${key}` as any;
     }
+
     throw new Error(`Invalid key: ${key}`);
   }) as EventRef<S, P, H>;
 }

@@ -21,7 +21,7 @@ function convertToVNode(fragment: DocumentFragment | HTMLElement): VNode {
 
   fragment.childNodes.forEach((node) => {
     if (isTextNode(node)) {
-      const text = node.textContent.trim();
+      const text = node.textContent?.trim();
 
       if (text) {
         children.push(text);

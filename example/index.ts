@@ -32,7 +32,7 @@ const ParentComponent = defineComponent({
       <div class="parent">
         <h2>${state.parentTitle}</h2>
         <p>${props?.name}</p>
-        <button onClick="${event('name')}">Click Parent</button>
+        <button onClick="${event('onParentClick')}">Click Parent</button>
         <child-component name="${props?.name}" doomy="${event('onSomethingClick')}"></child-component>
       </div>
     `;
