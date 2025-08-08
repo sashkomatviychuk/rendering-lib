@@ -2,12 +2,12 @@ import { renderComponent } from './render';
 import {
   ComponentDefinition,
   ComponentDefinitionReturn,
-  createEventRef,
   Handlers,
   InferProps,
   PropTypesDefinition,
   State,
 } from './types';
+import { createEventRef } from './utils';
 
 export function defineComponent<S extends State, P extends PropTypesDefinition, H extends Handlers<S, InferProps<P>>>(
   def: ComponentDefinition<S, P, H>
