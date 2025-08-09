@@ -37,7 +37,7 @@ const ParentComponent = defineComponent({
       </div>
     `;
 
-    console.log({ vNode });
+    console.log(JSON.stringify(vNode, null, 2));
 
     return vNode;
   },
@@ -63,10 +63,6 @@ const ChildComponent = defineComponent({
         this.state.todos[0].done = !this.state.todos[0].done;
       }
     },
-    onContainerClick(e) {
-      console.log({ props1: this.props });
-      this.props.handleChildClick(e); // todo
-    },
   },
   propTypes: {
     name: {
@@ -91,6 +87,7 @@ const ChildComponent = defineComponent({
         <div class="container">
           <button onClick="${event('toggleTodo')}">Toggle first todo</button>
           <button onClick="${event('addTodo')}">Add todo</button>
+          <button onClick="${event('handleChildClick')}">Click from parent</button>
         </div>
       </div>
     `;
