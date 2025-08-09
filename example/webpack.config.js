@@ -33,5 +33,3 @@ module.exports = {
     }),
   ],
 };
-
-// npm install webpack webpack-cli ts-loader typescript --save-dev
